@@ -1,0 +1,49 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid. Access to any address in 
+ * the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the 
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+CHIP Memory {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    //判断本次输入给谁，memoryFlag,screenFlag,KeyboardFlag只有一个为1
+    DMux(in=true, sel=address[14], a=memoryFlag, b=io);
+    DMux(in=io, sel=address[13], a=screenFlag, b=keyboardFlag);
+    //访问的是内存
+    Mux16(a=false, b=in, sel=memoryFlag, out=o1);
+    And(a=memoryFlag, b=load, out=loadToMemory);
+    RAM16K(in=o1, load=loadToMemory, address=address[0..13], out=out1);
+    Mux16(a=false, b=out1, sel=memoryFlag, out=output1); //如果不是访问内存，将out1清空
+    //访问的是屏幕
+    Mux16(a=false, b=in, sel=screenFlag, out=o2);
+    And(a=screenFlag, b=load, out=loadToScreen);
+    Screen(in=o2, load=loadToScreen, address=address[0..12], out=out2);
+    Mux16(a=false, b=out2, sel=screenFlag, out=output2); //如果不是访问屏幕，将out2清空
+    //从键盘输入
+    Keyboard(out=out3);
+    Mux16(a=false, b=out3, sel=keyboardFlag, out=output3); //如果不是访问键盘，将out3清空
+
+    Or16(a=output1, b=output2, out=ans1);
+    Or16(a=ans1, b=output3, out=out);
+}
