@@ -12,23 +12,26 @@
 // Put your code here.
 
 
-//将R[2]置为0
+//R2 = 0
 @2
 M=0
 
 (LOOP)
+// if R0 <= 0 then goto END
 @0
-D=M  // save the R0 to D 
+D=M 
 @END
-D;JLE // if R0 <= 0 then jump to end
-
+D;JLE 
+//R2 = R2 + R1
 @1
 D=M
 @2
-M=M+D //
+M=M+D 
+//R0 = R0 - 1
 @0
-M=M-1
-
+M=M-1 
+//goto LOOP
 @LOOP
 0;JMP
+
 (END)

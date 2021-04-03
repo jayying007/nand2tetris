@@ -39,22 +39,35 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    //判断指令类型
     DMux(in=true, sel=instruction[15], a=isA, b=isC);
-
-    And(a = isC, b = instruction[5], out = isLoadAluOut);
-    ARegister(in=AluOut, load=isLoadAluOut, out=ArOut);
-
-
-
+    //处理A寄存器    
+    Or(a=isA, b=instruction[5], out=loadToAr); //这两种情况都是要写入,其他则不写入
+    Mux4Way16(a=false, b=AluOut, c=instruction, d=instruction, sel[1]=isA, sel[0]=instruction[5], out=ArIn);//根据情况选择A寄存器的输入
+    ARegister(in=ArIn, load=loadToAr, out=ArOut, out[0..14] = addressM); //如果是A指令，输入
+    //处理D寄存器
+    And(a=isC, b=instruction[4], out=AluToDr);
+    DRegister(in=AluOut, load=AluToDr, out=DrOut);
+    //处理writeM
+    And(a=isC, b=instruction[3], out=writeM);
+    //处理ALU
+    Mux16(a=ArOut, b=inM, sel=instruction[12], out=AluIn2);
     And(a = isC, b = instruction[6], out = no);
     And(a = isC, b = instruction[7], out = f);
     And(a = isC, b = instruction[8], out = ny);
     And(a = isC, b = instruction[9], out = zy);
     And(a = isC, b = instruction[10], out = nx);
     And(a = isC, b = instruction[11], out = zx);
+    ALU(x=DrOut, y=AluIn2, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=AluOut, out = outM, zr=zr, ng=ng);
+    //处理PC
+    Or(a=zr, b=ng, out=leq);
+    Not(in=leq, out=gt);
+    And(a=gt, b=instruction[0], out=jgt);
+    And(a=zr, b=instruction[1], out=jeq);
+    And(a=ng, b=instruction[2], out=jlt);  //处理是否跳转
 
-    ALU(x=, y=, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=AluOut, zr=, ng=);
-
-    And(a=isC, b=instruction[3], out=writeM);
+    Or(a=jgt, b=jeq, out=jump1);
+    Or(a=jump1, b=jlt, out=jump2);
+    And(a=isC, b=jump2, out=jump3); //需要是C指令才可能跳转
+    PC(in=ArOut, load=jump3, inc=true, reset=reset, out[0..14]=pc);
 }

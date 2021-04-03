@@ -17,56 +17,59 @@
 // keyboard -- 24576
 
 (LOOP)
-@24576
-D=M
-@WHITE
-D;JEQ
-
-
-@7000
+//R0=5000
+@5000
 D=A
 @0
 M=D
+//D=M[Keyboard]
+@KBD
+D=M
+//if D == 0 then goto FILL2
+@FILL2
+D;JEQ
 
 (FILL)
+//if R0 == 0 then goto LOOP
 @0
 D=M
 @LOOP
 D;JEQ
-
-@16384
+//M[Screen+R0] = 1
+@SCREEN
 D=D+A
-A=D
-M=1
+@1
+M=D
+@255
+D=A
+@1
+A=M
+M=D
+//R0 = R0 - 1
 @0
 M=M-1
+//goto FILL
 @FILL
 0;JMP
 
 
-
-(WHITE)
-
-@7000
-D=A
-@0
-M=D
-
 (FILL2)
+//if R0 == 0 then goto LOOP
 @0
 D=M
 @LOOP
 D;JEQ
-
-@16384
+//M[Screen+R0] = 0
+@SCREEN
 D=D+A
 A=D
-M=1
+M=0
+//R0 = R0 - 1
 @0
 M=M-1
+//goto FILL2
 @FILL2
 0;JMP
-
 
 
 // while(true) {

@@ -1,0 +1,98 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+
+    /** Initializes the library. */
+    function void init() {
+        return;
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if(x > 0) {
+            return x;
+        }
+        return -x;
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+    function int multiply(int x, int y) {
+        var int sum, mask, index;
+        let mask = 1;
+        while(index < 16) {
+            if(x & mask) {
+                let sum = sum + y;
+            }
+            let y = y + y;
+            let mask = mask + mask;
+            let index = index + 1;
+        }
+        return sum;
+    }
+
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
+    function int divide(int x, int y) {
+        var int q;
+        let q = Math.div(Math.abs(x), Math.abs(y));
+        if(((x & y) < 0) | ((x | y) > 0)) { //符合位都为1或0
+            return q;
+        } else {
+            return -q;
+        }
+    }
+    function int div(int x, int y) {
+        var int q;
+        if((x < 0) | (y < 0) | (x < y)) {
+            return 0;
+        }
+        let q = Math.divide(x, y * 2);
+        if((x - (2 * q * y)) < y) {
+            return 2 * q;
+        }
+        return 2 * q + 1;
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int temp, i;
+        while(true) {
+            let temp = i * i;
+            if((temp < 0) | (temp > x)) {
+                return i - 1;
+            }
+            let i = i + 1;
+        }
+        return i;
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+        if(a > b) {
+            return a;
+        }
+        return b;
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+        if(a < b) {
+            return a;
+        }
+        return b;
+    }
+}
