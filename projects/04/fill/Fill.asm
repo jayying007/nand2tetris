@@ -15,60 +15,60 @@
 
 // screen -- 16384
 // keyboard -- 24576
-
+//在一块256x512像素的屏幕上，有8K的地址空间来映射，则平均1bit代表2像素点
 (LOOP)
-//R0=5000
-@5000
+//R0=8K=8192
+@8192
 D=A
-@0
+@R0
 M=D
 //D=M[Keyboard]
 @KBD
 D=M
-//if D == 0 then goto FILL2
-@FILL2
+//if D == 0 then goto FILL_WHITE
+@FILL_WHITE
 D;JEQ
 
-(FILL)
-//if R0 == 0 then goto LOOP
-@0
+(FILL_BLACK)
+//if R0 < 0 then goto LOOP
+@R0
 D=M
 @LOOP
-D;JEQ
-//M[Screen+R0] = 1
+D;JLT
+//M[Screen+R0] = -1 (11111111)  一个内存地址有8bit
 @SCREEN
 D=D+A
-@1
+@screenAddrForDraw
 M=D
-@255
-D=A
 @1
+D=-A
+@screenAddrForDraw
 A=M
 M=D
 //R0 = R0 - 1
-@0
+@R0
 M=M-1
-//goto FILL
-@FILL
+//goto FILL_BLACK
+@FILL_BLACK
 0;JMP
 
 
-(FILL2)
-//if R0 == 0 then goto LOOP
-@0
+(FILL_WHITE)
+//if R0 < 0 then goto LOOP
+@R0
 D=M
 @LOOP
-D;JEQ
+D;JLT
 //M[Screen+R0] = 0
 @SCREEN
 D=D+A
 A=D
 M=0
 //R0 = R0 - 1
-@0
+@R0
 M=M-1
-//goto FILL2
-@FILL2
+//goto FILE_WHITE
+@FILL_WHITE
 0;JMP
 
 

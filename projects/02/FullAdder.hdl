@@ -16,5 +16,5 @@ CHIP FullAdder {
     // Put you code here:
     HalfAdder(a=a, b=b, sum=s1, carry=o1);
     HalfAdder(a=c, b=s1, sum=sum, carry=o2);
-    Xor(a=o1, b=o2, out=carry);
+    Or(a=o1, b=o2, out=carry); //这里o1和o2最多只有一个1，所以用Or运算或者Xor运算都可以
 }
