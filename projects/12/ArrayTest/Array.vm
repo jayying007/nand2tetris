@@ -1,7 +1,8 @@
 function Array.new 0
 push argument 0
 push constant 0
-eq
+gt
+not
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0

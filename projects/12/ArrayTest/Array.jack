@@ -15,7 +15,7 @@ class Array {
 
     /** Constructs a new Array of the given size. */
     function Array new(int size) {
-        if(size = 0) { //根据它的vm代码反推出来的
+        if(~(size > 0)) { //根据它的vm代码反推出来的
             do Sys.error(2);
         }
         return Memory.alloc(size);

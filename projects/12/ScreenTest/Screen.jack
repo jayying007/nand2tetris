@@ -1,0 +1,162 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 256 rows (indexed 0..255, top to bottom)
+ * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+    static Array bitArray;
+    static int screenAddr;
+    static boolean color;
+    /** Initializes the Screen. */
+    function void init() {
+        let screenAddr = 16384;
+        let color = true;
+        let bitArray = Array.new(8);
+        let bitArray[0] = -128; // 1000 0000
+        let bitArray[1] = 64;   // 0100 0000
+        let bitArray[2] = 32;   // 0010 0000
+        let bitArray[3] = 16;
+        let bitArray[4] = 8;
+        let bitArray[5] = 4;
+        let bitArray[6] = 2;
+        let bitArray[7] = 1;
+
+        return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+        var int count;
+        while (count < 8192) {
+            let screenAddr[count] = 0;
+            let count = count + 1;
+        }
+        return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let color = b;
+        return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int remain, addr, mask;
+        if ((x < 0) | (x > 511) | (y < 0) | (y > 255)) {
+            do Sys.error(7);
+        }
+        let remain = x - (x / 16 * 16);
+        let addr = (y * 32) + (x / 16);
+        if (color) {
+            let mask = bitArray[remain / 2];
+            let screenAddr[addr] = screenAddr[addr] | mask;
+        } else {
+            let mask = ~bitArray[remain / 2];
+            let screenAddr[addr] = screenAddr[addr] & mask;
+        }
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        /**
+         思路：
+         1. 把(x1,y1) (x2,y2)调整到 x1<x2;
+         2. 计算中间坐标点
+         2.1 x3 = x1 + 1
+         2.2 y3通过枚举，根据两个斜率的比较：(y3-y1)/(x3-x1)与(y2-y1)/(x2-x1)
+         */
+        var int deltaX, deltaY, k;
+        var int step;
+        var int xSign, ySign;
+        var int loopCount;
+        let deltaX = x2 - x1;
+        let deltaY = y2 - y1;
+
+        do Screen.drawPixel(x1, y1);
+        do Screen.drawPixel(x2, y2);
+        //单点
+        if ((deltaX = 0) & (deltaY = 0)) {
+            return;
+        }
+        //横线
+        if (deltaY = 0) {
+            if (deltaX > 0) {
+                let step = 1;
+            } else {
+                let step = -1;
+            }
+            while (~(x1 = x2)) {
+                let x1 = x1 + step;
+                do Screen.drawPixel(x1, y1);
+            }
+            return;
+        }
+        //直线
+        if (deltaX = 0) {
+            if (deltaY > 0) {
+                let step = 1;
+            } else {
+                let step = -1;
+            }
+            while (~(y1 = y2)) {
+                let y1 = y1 + step;
+                do Screen.drawPixel(x1, y1);
+            }
+            return;
+        }
+
+        let k = deltaY / deltaX;
+        let loopCount = 0;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (deltaX > 0) {
+                let step = 1;
+            } else {
+                let step = -1;
+            }
+            while (~(x1 = x2)) {
+                let loopCount = loopCount + 1;
+                let x1 = x1 + step;
+                let y1 = y1 + (loopCount / deltaX * deltaY);
+                do Screen.drawPixel(x1, y1);
+            }
+        } else {
+            if (deltaY > 0) {
+                let step = 1;
+            } else {
+                let step = -1;
+            }
+            while (~(y1 = y2)) {
+                let loopCount = loopCount + 1;
+                let y1 = y1 + step;
+                let x1 = x1 + (deltaX * loopCount / deltaY);
+                do Screen.drawPixel(x1, y1);
+            }
+        }
+
+        return;
+    }
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        do Screen.drawLine(x1, y1, x2, y1);
+        do Screen.drawLine(x1, y1, x1, y2);
+        do Screen.drawLine(x2, y2, x2, y1);
+        do Screen.drawLine(x2, y2, x1, y2);
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+        return;
+    }
+}

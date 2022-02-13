@@ -6,33 +6,39 @@
 // (identical to projects/09/Average/Main.jack)
 
 /** Computes the average of a sequence of integers. */
-class Main {
-    function void main() {
-        var Array a;
+//第一种注释
+//第二种/*注释
+//第三种注释*/
+/*第四种注释 // */
+/*第五种注释// */class Main { //哈哈哈😂
+    function /*第六种注释*/ void main() {
+  /*第七种注释*/      var/*这。。*/ Array a;
         var int length;
         var int i, sum;
-	
-	let length = Keyboard.readInt("HOW MANY NUMBERS? ");
-	let a = Array.new(length);
-	let i = 0;
-	
-	while (i < length) {
-	    let a[i] = Keyboard.readInt("ENTER THE NEXT NUMBER: ");
-	    let i = i + 1;
-	}
-	
-	let i = 0;
-	let sum = 0;
-	
-	while (i < length) {
-	    let sum = sum + a[i];
-	    let i = i + 1;
-	}
-	
-	do Output.printString("THE AVERAGE IS: ");
-	do Output.printInt(sum / length);
-	do Output.println();
-	
-	return;
+	/**
+	 * 第八种注释
+	 */
+		let length = Keyboard.readInt("HOW MANY NUMBERS? ");
+		let a = Array.new(length);
+		let i = 0;
+		
+		while (i < length) {
+			let a[i] = Keyboard.readInt("ENTER THE NEXT NUMBER: ");
+			let i = i + 1;
+		}
+		
+		let i = 0;
+		let sum = 0;
+		
+		while (i < length) {
+			let sum = sum + a[i];
+			let i = i + 1;
+		}
+		
+		do Output.printString("THE AVERAGE IS: ");
+		do Output.printInt(sum / length);
+		do Output.println();
+		
+		return;
     }
 }

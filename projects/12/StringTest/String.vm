@@ -155,7 +155,7 @@ sub
 pop this 2
 push constant 0
 return
-function String.intValue 5
+function String.intValue 3
 push argument 0
 pop pointer 0
 push this 2
@@ -168,8 +168,7 @@ push constant 0
 return
 label IF_FALSE0
 push constant 0
-not
-pop local 3
+pop local 2
 push constant 0
 push this 1
 add
@@ -182,61 +181,63 @@ goto IF_FALSE1
 label IF_TRUE1
 push constant 0
 not
-pop local 4
+pop local 1
+push local 2
 push constant 1
-pop local 0
+add
+pop local 2
 label IF_FALSE1
+push constant 0
+pop local 0
 label WHILE_EXP0
-push local 0
+push local 2
 push this 2
 lt
-push local 3
-and
-not
-if-goto WHILE_END0
-push local 0
+push local 2
 push this 1
 add
 pop pointer 1
 push that 0
-push constant 48
-sub
-pop local 2
-push local 2
-push constant 0
-lt
-push local 2
-push constant 9
+push constant 47
 gt
-or
+and
+push local 2
+push this 1
+add
+pop pointer 1
+push that 0
+push constant 58
+lt
+and
 not
-pop local 3
-push local 3
-if-goto IF_TRUE2
-goto IF_FALSE2
-label IF_TRUE2
-push local 1
+if-goto WHILE_END0
+push local 0
 push constant 10
 call Math.multiply 2
 push local 2
+push this 1
 add
-pop local 1
-push local 0
+pop pointer 1
+push that 0
+add
+push constant 48
+sub
+pop local 0
+push local 2
 push constant 1
 add
-pop local 0
-label IF_FALSE2
+pop local 2
 goto WHILE_EXP0
 label WHILE_END0
-push local 4
-if-goto IF_TRUE3
-goto IF_FALSE3
-label IF_TRUE3
 push local 1
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 0
 neg
-pop local 1
-label IF_FALSE3
-push local 1
+pop local 0
+label IF_FALSE2
+push local 0
 return
 function String.setInt 4
 push argument 0
@@ -251,9 +252,6 @@ push constant 19
 call Sys.error 1
 pop temp 0
 label IF_FALSE0
-push constant 6
-call Array.new 1
-pop local 2
 push argument 1
 push constant 0
 lt
@@ -262,122 +260,84 @@ goto IF_FALSE1
 label IF_TRUE1
 push constant 0
 not
-pop local 3
+pop local 1
 push argument 1
 neg
 pop argument 1
 label IF_FALSE1
-push argument 1
-pop local 1
+push constant 6
+call Array.new 1
+pop local 0
+push constant 0
+pop local 3
 label WHILE_EXP0
-push local 1
+push argument 1
 push constant 0
 gt
 not
 if-goto WHILE_END0
 push argument 1
+push argument 1
 push constant 10
 call Math.divide 2
-pop local 1
-push local 0
-push local 2
-add
-push constant 48
-push argument 1
-push local 1
 push constant 10
 call Math.multiply 2
 sub
+pop local 2
+push local 3
+push local 0
 add
+push local 2
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
+push argument 1
+push constant 10
+call Math.divide 2
+pop argument 1
+push local 3
 push constant 1
 add
-pop local 0
-push local 1
-pop argument 1
+pop local 3
 goto WHILE_EXP0
 label WHILE_END0
-push local 3
+push constant 0
+pop this 2
+push local 1
 if-goto IF_TRUE2
 goto IF_FALSE2
 label IF_TRUE2
-push local 0
-push local 2
-add
+push pointer 0
 push constant 45
+call String.appendChar 2
 pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push local 0
-push constant 1
-add
-pop local 0
 label IF_FALSE2
-push this 0
-push local 0
-lt
-if-goto IF_TRUE3
-goto IF_FALSE3
-label IF_TRUE3
-push constant 19
-call Sys.error 1
-pop temp 0
-label IF_FALSE3
-push local 0
-push constant 0
-eq
-if-goto IF_TRUE4
-goto IF_FALSE4
-label IF_TRUE4
-push constant 0
-push this 1
-add
-push constant 48
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 1
-pop this 2
-goto IF_END4
-label IF_FALSE4
-push constant 0
-pop this 2
 label WHILE_EXP1
-push this 2
-push local 0
-lt
+push local 3
+push constant 0
+gt
 not
 if-goto WHILE_END1
-push this 2
-push this 1
-add
-push local 0
-push this 2
+push pointer 0
+push local 3
 push constant 1
-add
 sub
-push local 2
+push local 0
 add
 pop pointer 1
 push that 0
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push this 2
-push constant 1
+push constant 48
 add
-pop this 2
+call String.appendChar 2
+pop temp 0
+push local 3
+push constant 1
+sub
+pop local 3
 goto WHILE_EXP1
 label WHILE_END1
-label IF_END4
-push local 2
+push local 0
 call Array.dispose 1
 pop temp 0
 push constant 0
